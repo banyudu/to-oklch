@@ -1,11 +1,9 @@
 #!/usr/bin/env node
 
-const Color = require('colorjs.io').default;
-const readline = require('readline');
+import Color from 'colorjs.io'
 
 // Regular expressions for matching different color formats
-const hexRegex = /#([0-9A-Fa-f]{3,8})\b/g;
-const rgbRegex = /rgba?\([^)]+\)/g;
+const colorRegex = /(#(([0-9A-Fa-f]{3,8})\b)|(rgba?\([^)]+\)))/g;
 
 // Function to convert color to OKLCH and get multiple formats
 function convertToOklch(colorStr) {
@@ -38,39 +36,11 @@ function convertToOklch(colorStr) {
   }
 }
 
-// Process the CSS input
-async function processCSS() {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-    terminal: false
-  });
-
-  let cssContent = '';
-
-  // Read input line by line
-  for await (const line of rl) {
-    cssContent += line + '\n';
-  }
-
-  // Process hex colors
-  const transformed = cssContent.replace(hexRegex, (match) => {
+export const transform = (cssContent) => {
+  const transformed = cssContent.replace(colorRegex, (match) => {
     const { converted, rgba, hex } = convertToOklch(match);
     return `${converted} /* rgba: ${rgba}, hex: ${hex} */`;
   });
 
-  // Output the transformed CSS
-  process.stdout.write(transformed);
+  return transformed;
 }
-
-// Handle errors and run
-async function main() {
-  try {
-    await processCSS();
-  } catch (error) {
-    console.error('Error processing CSS:', error);
-    process.exit(1);
-  }
-}
-
-main();
