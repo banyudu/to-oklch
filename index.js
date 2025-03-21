@@ -54,13 +54,7 @@ async function processCSS() {
   }
 
   // Process hex colors
-  let transformed = cssContent.replace(hexRegex, (match) => {
-    const { converted, rgba, hex } = convertToOklch(match);
-    return `${converted} /* rgba: ${rgba}, hex: ${hex} */`;
-  });
-
-  // Process RGB/RGBA colors
-  transformed = transformed.replace(rgbRegex, (match) => {
+  const transformed = cssContent.replace(hexRegex, (match) => {
     const { converted, rgba, hex } = convertToOklch(match);
     return `${converted} /* rgba: ${rgba}, hex: ${hex} */`;
   });
